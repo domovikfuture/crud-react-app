@@ -1,14 +1,21 @@
 import "./goods-list-item.scss";
 
-export default function GoodsListItem() {
+export default function GoodsListItem({name, price, increase}) {
+
+  let classNames = "list-group-item d-flex justify-content-between";
+
+  if(increase) {
+    classNames += " increase";
+  }
+
   return (
-    <li className="list-group-item d-flex justify-content-between">
-      <span className="list-group-item-label">Силиконовый чехол</span>
+    <li className={classNames}>
+      <span className="list-group-item-label">{name}</span>
       <input
         type="text"
         className="list-group-item-input"
-        defaultValue="50 BYN"
-      ></input>
+        defaultValue={price + ' BYN'}
+      />
       <div className="d-flex justify-content-center align-items-center">
         <button type="button" className="btn-cookie btn-sm">
           <i className="fas fa-cookie"></i>
