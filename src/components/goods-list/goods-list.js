@@ -5,8 +5,9 @@ import "./goods-list.scss";
 export default function GoodsList({data}) {
 
   const elements = data.map(item => {
+    const {id, ...itemProps} = item;
     return (
-      <GoodsListItem {...item}/>
+      <GoodsListItem key = {id} {...itemProps}/>
     )
   })
 
