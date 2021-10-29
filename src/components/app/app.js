@@ -1,80 +1,116 @@
-import { Component } from "react";
+import { Component } from 'react';
 
-import AppInfo from "../app-info/app-info";
-import SearchPanel from "../search-panel/search-panel";
-import AppFilter from "../app-filter/app-filter";
-import GoodsList from "../goods-list/goods-list";
-import GoodsAddForm from "../goods-add-form/goods-add-form";
+import AppInfo from '../app-info/app-info';
+import SearchPanel from '../search-panel/search-panel';
+import AppFilter from '../app-filter/app-filter';
+import EmployeesList from '../employees-list/employees-list';
+import EmployeesAddForm from '../employees-add-form/employees-add-form';
 
-import "./app.scss";
+import './app.css';
 
-export default class App extends Component {
-  constructor(props){
-    super(props);
-     this.state = {
-      data : [
-        {name: "Cиликоновый бирюзовый чехол на Iphone 7/8/SE 2020", price: 11.99, priority: true, increase: false, id: 1},
-        {name: "Cиликоновый черный чехол на Iphone 7/8/SE 2020", price: 8.99, priority: false, increase: true, id: 2},
-        {name: "Cиликоновый белый чехол на Iphone 7/8/SE 2020", price: 10.99, priority: false, increase: false, id: 3},
-      ],
-    }
-    this.maxId = 4;
-  }
-
-  deleteItem = (id) => {
-    this.setState(({data}) => {
-      return {
-        data: data.filter(item => item.id !== id)
-      }
-    })
-  }
-
-  addItem = (name, price) => {
-    const newItem = {
-        name, 
-        price,
-        priority: false,
-        increase: false,
-        id: this.maxId++
-    }
-    this.setState(({data}) => {
-        const newArr = [...data, newItem];
-        return {
-            data: newArr
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [
+                {name: 'Бирюзовый чехол на Iphone 7/8/SE 2020', salary: 10.99, increase: false, rise: true, id: 1},
+                {name: 'Черный чехол на Iphone 7/8/SE 2020', salary: 15.99, increase: true, rise: false, id: 2},
+                {name: 'Серый чехол на Iphone 7/8/SE 2020', salary: 5.99, increase: false, rise: false, id: 3}
+            ],
+            term: '', 
+            filter: 'all'
         }
-    });
-  }
+        this.maxId = 4;
+    }
 
-  onToggleProp = (id, prop) => {
-    this.setState(({data})=>({
-      data: data.map(item=>{
-        if (item.id === id) {
-          return {...item, [prop]: !item[prop]}
+    deleteItem = (id) => {
+        this.setState(({data}) => {
+            return {
+                data: data.filter(item => item.id !== id)
+            }
+        })
+    }
+
+    // Да, пока могут добавляться пустые пользователи. Мы это еще исправим
+    addItem = (name, salary) => {
+        const newItem = {
+            name, 
+            salary,
+            increase: false,
+            rise: false,
+            id: this.maxId++
         }
-        return item;
-      })
-    }))
-  }
- 
-  render(){
-    const goods = this.state.data.length;
-    const increased = this.state.data.filter(item => item.increase).length;
-    return (
-      <div className="app">
-        <AppInfo goods = {goods} increased = {increased} />
-  
-        <div className="search-panel">
-          <SearchPanel />
-          <AppFilter />
-        </div>
-  
-        <GoodsList 
-          data={this.state.data}
-          onDelete={this.deleteItem}
-          onToggleProp={this.onToggleProp}
-        />
-        <GoodsAddForm onAdd={this.addItem}/>
-      </div>
-    );
-  }
+        this.setState(({data}) => {
+            const newArr = [...data, newItem];
+            return {
+                data: newArr
+            }
+        });
+    }
+
+    onToggleProp = (id, prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, [prop]: !item[prop]}
+                }
+                return item;
+            })
+        }))
+    }
+
+    searchEmp = (items, term) => {
+        if (term.length === 0) {
+            return items;
+        }
+
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1
+        })
+    }
+
+    onUpdateSearch = (term) => {
+        this.setState({term});
+    }
+
+    filterPost = (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise);
+            case 'moreThen1000':
+                return items.filter(item => item.salary > 50);
+            default:
+                return items
+        }
+    }
+
+    onFilterSelect = (filter) => {
+        this.setState({filter});
+    }
+
+    render() {
+        const {data, term, filter} = this.state;
+        const employees = this.state.data.length;
+        const increased = this.state.data.filter(item => item.increase).length;
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter);
+
+        return (
+            <div className="app">
+                <AppInfo employees={employees} increased={increased}/>
+    
+                <div className="search-panel">
+                    <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
+                    <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
+                </div>
+                
+                <EmployeesList 
+                    data={visibleData}
+                    onDelete={this.deleteItem}
+                    onToggleProp={this.onToggleProp}/>
+                <EmployeesAddForm onAdd={this.addItem}/>
+            </div>
+        );
+    }
 }
+
+export default App;

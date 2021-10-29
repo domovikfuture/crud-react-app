@@ -1,11 +1,13 @@
-import "./app-info.scss";
+import "./app-info.css";
 
-export default function AppInfo({increased, goods}) {
-  return (
-    <div className="app-info">
-      <h1>Учёт товаров на складе №</h1>
-      <h2>Общее число товаров: {goods}</h2>
-      <h2>К отгрузке готовы: {increased}</h2>
-    </div>
-  );
+const AppInfo = ({increased, employees}) => {
+    return (
+        <div className="app-info">
+            <h1>Учет товаров на складе</h1>
+            <h2>Общее число товаров: {employees}</h2>
+            <h2>К отгрузке готовы: {increased}</h2>
+        </div>
+    )
 }
+
+export default AppInfo;
